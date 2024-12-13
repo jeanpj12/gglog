@@ -12,12 +12,20 @@ class DeliveriesController {
 
         const {user_id, description} = bodySchema.parse(req.body)
 
-        await prisma.delivery.create({
+        const deliveryCreated = await prisma.delivery.create({
             data: {
                 userId: user_id,
                 description
             }
         })
+
+        await prisma.deliveryLog.create(
+            {
+                data: {
+                    description: deliveryCreated.status,
+                    deliveryId: deliveryCreated.id
+                }
+            })
 
         res.status(201).json()
     }
